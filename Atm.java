@@ -5,6 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Scanner;
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime;  
+import java.io.File;
+import java.io.FileWriter; 
+import java.io.IOException;
 import java.sql.*;
 public class Atm {
 	
@@ -41,7 +46,7 @@ public class Atm {
 		System.out.println(" \t\t\t\t\t\t\t\t***************************************");
 		System.out.println(" \t\t\t\t\t\t\t\t********     Welcome      *************");
 		System.out.println(" \t\t\t\t\t\t\t\t********      To          *************");
-		System.out.println(" \t\t\t\t\t\t\t\t******** RAVIJI_ASWA ATM  *************");
+		System.out.println(" \t\t\t\t\t\t\t\t********  Black Fox ATM   *************");
 		System.out.println(" \t\t\t\t\t\t\t\t***************************************");
 		System.out.println("\n\n\t\t\t\t\t\t\t Press ENTER to Continue");
 		string.nextLine();
@@ -58,12 +63,12 @@ public class Atm {
 		rs=stmt.executeQuery(qry);
 		
 		if (rs.next()) {
-			System.out.println("Your Account is Valid :-)\n\n");
+			//System.out.println("Your Account is Valid \n\n");
 			options();
 			break;	
 		}
 		else {
-			System.out.println(" Sorry ,your Account is IN-Valid :-(\n");
+			System.out.println(" Sorry ,your Account is IN-Valid \n");
 			flag = flag + 1;
 		}
 		
@@ -101,8 +106,9 @@ public class Atm {
 		System.out.println("Type 5 : Pin change");
 		System.out.println("Type 6 : Contact-US");
 		System.out.println("Type 7 : Exit Out ATM");
-		System.out.print("\nEnter your option 1 to 7 : ");
 		System.out.println("------------------------------");
+		System.out.print("\nEnter your option 1 to 7 : ");
+		
 
 
 		option=integer.nextInt();
@@ -180,8 +186,50 @@ public class Atm {
 			    System.out.println("\n--------------");
 				System.out.println("Mini Statement");
 				System.out.println("--------------\n");
-				//Enter mini statement code
+				int mini_balance =0;
+				String mini_name = ""; 
+				qry = "SELECT Name,Balance from Atmusers where Accno = "+Accno+" AND Pin = "+pin+" ";
+				rs=stmt.executeQuery(qry);
+				
+				while (rs.next()) {
+					mini_name=rs.getString("Name");
+					mini_balance = rs.getInt("Balance");
+				}
+				try {  
+			        FileWriter fwrite = new FileWriter("/home/blackfox/MiniStatement.txt",true);  
+			          
+			        
+			        fwrite.write("*************************************\n");   
+			        fwrite.write("*******Welcome To BlackFox ATM*******\n"); 
+			        fwrite.write("*************************************\n"); 
+			        fwrite.write("\n-----------------------\n"); 
+			        fwrite.write("-----Mini Statement------\n"); 
+			        fwrite.write("-------------------------\n"); 
+			        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+			        LocalDateTime now = LocalDateTime.now();  
+			        fwrite.write(dtf.format(now)+ "\n"); 
+			        fwrite.write("\nHi "+ mini_name + "\n"); 
+			        fwrite.write("\nYour Available Balance is :"+ mini_balance + "\n"); 
+			        fwrite.write("\n-----------------------\n"); 
+			        fwrite.write("--Thank You For Using--\n"); 
+			        fwrite.write("-----Black Fox Atm-----\n"); 
+			        fwrite.write("-----------------------\n");
+			      
+			        // Closing the file stream  
+			        fwrite.close();   
+			        System.out.println("\n-------------------------------------");
+			        System.out.println("Mini Statement Created Sucessfully..."); 
+			        System.out.println("-------------------------------------\n");
+			    } catch (IOException e) {  
+			    	System.out.println("\n-------------------------------------");
+			        System.out.println("Right Now Mini Statement is not Working"); 
+			        System.out.println("You can use Balance Check Option in ATM");
+			        System.out.println("-------------------------------------\n");
+			   
+			        } 
+				thankyou();
 				break;
+				
 			case 5:
 				System.out.println("\n------------");
 				System.out.println("Pin Change");
@@ -196,8 +244,7 @@ public class Atm {
 					checkdob = rs.getString("Dob");
 					checkpin = rs.getInt("Pin");
 					//System.out.println(checkdob);
-					//System.out.println(checkpin);
-					
+					//System.out.println(checkpin);	
 				}
 				int newpin;
 				int oldpin;
@@ -246,9 +293,8 @@ public class Atm {
 					System.out.println("------------------------------------\n");
 					thankyou();
 				}
-				
-			
 				break;
+				
 			case 6:
 				System.out.println("\n-----------");
 				System.out.println("Contact Us");
@@ -259,15 +305,16 @@ public class Atm {
 				System.out.println("-------------------------------\n");
 				thankyou();
 				break;
+				
 			case 7:
 				//System.out.println("Exit");
 				display();
 				break;
+				
 			default:
 				System.out.println("\nEnter a number between 1 to 7");
 				System.out.println("-------------------------------\n");
 		}
-
 
 	}
 	public void thankyou(){
@@ -278,6 +325,5 @@ public class Atm {
 
 	}
 }
-
 
 
