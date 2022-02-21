@@ -19,8 +19,8 @@ public class Atm {
 	int pin;
 	int option;
 	
-	Scanner string =new Scanner(System.in);
-	Scanner integer = new Scanner(System.in);
+	Scanner string =new Scanner(System.in);   //Scanner object for String
+	Scanner integer = new Scanner(System.in); //Scanner object for Integer
 	
 	//DB Connection Variables
 	String url = "jdbc:mysql://localhost:3306/Atm?characterEncoding=utf8";
@@ -33,12 +33,15 @@ public class Atm {
 	public static void main(String[] args) throws Exception {
 		
 			Atm obj = new Atm();
-			obj.display();	
+			obj.display();	  //Display function calling
 		
 	}
 	
 			
 	public void display () throws Exception {
+		
+		//Display function for welcoming and Authentication
+		
 		Class.forName("com.mysql.jdbc.Driver");  
 		Connection con = DriverManager.getConnection(url,username,password);
 		Statement stmt = con.createStatement();
@@ -52,10 +55,10 @@ public class Atm {
 		string.nextLine();
 		System.out.println("*****Enter Your Credintals******\n\n");
 		int flag = 0;
-		while (flag < 3) {
+		while (flag < 3) {                                            //For Incorrect Accno and Pin giving three Chances to correct it 
 		
 		System.out.println("Enter your Account Number: ");
-		Accno=integer.nextInt();
+		Accno=integer.nextInt();                                      //Getting user input for Authentication
 		System.out.println("Enter your Pin: ");
 		pin=integer.nextInt();
 		
@@ -63,19 +66,21 @@ public class Atm {
 		rs=stmt.executeQuery(qry);
 		
 		if (rs.next()) {
-			//System.out.println("Your Account is Valid \n\n");
+			//System.out.println("Your Account is Valid \n\n");      //Checking the input in the DB
 			options();
 			break;	
 		}
 		else {
-			System.out.println(" Sorry ,your Account is IN-Valid \n");
+			System.out.println("\n..............................");
+			System.out.println("Sorry ,your Account is IN-Valid ");
+			System.out.println("..............................\n");
 			flag = flag + 1;
 		}
 		
 		if (flag == 3){
-			System.out.println(" \n..............................");
-			System.out.println(" Please Try after some time ...");
-			System.out.println(" ..............................\n");	
+			System.out.println("\n..............................");
+			System.out.println("Please Try after some time ...");
+			System.out.println("..............................\n");	
 			thankyou();
 		}
 		}
@@ -83,8 +88,10 @@ public class Atm {
 	
 	public void options() throws Exception{
 		
+		//Options function will give the Atm options and data from DB
+		
 		Class.forName("com.mysql.jdbc.Driver");  
-		Connection con = DriverManager.getConnection(url,username,password);
+		Connection con = DriverManager.getConnection(url,username,password);      //DB Connection
 		Statement stmt = con.createStatement();
 		ResultSet rs;
 		PreparedStatement st;
@@ -102,7 +109,7 @@ public class Atm {
 		System.out.println("Type 1 : Deposit");
 		System.out.println("Type 2 : Withdraw");
 		System.out.println("Type 3 : Balance check");
-		System.out.println("Type 4 : Mini statement");
+		System.out.println("Type 4 : Mini statement");                         //Atm options
 		System.out.println("Type 5 : Pin change");
 		System.out.println("Type 6 : Contact-US");
 		System.out.println("Type 7 : Exit Out ATM");
@@ -110,14 +117,14 @@ public class Atm {
 		System.out.print("\nEnter your option 1 to 7 : ");
 		
 
-
-		option=integer.nextInt();
+																			  //Getting options 
+		option=integer.nextInt();                                                 
 		switch(option){
 			case 1:
 				System.out.println("\n-----------");
 				System.out.println(" Deposit");
 				System.out.println("-----------\n");
-				int deposit;
+				int deposit;												   //Case 1 : Deposit ,Amount should be less than 1 lakh
 				while (true) {
 				System.out.println("Enter Amount to Deposit: ");
 				deposit=integer.nextInt();
@@ -142,12 +149,14 @@ public class Atm {
 				int withdraw;
 				System.out.println("\n-----------");
 				System.out.println("Withdraw");
-				System.out.println("-----------\n");
+				System.out.println("-----------\n");                          //Case 2 : Withdraw ,Amount should be less than 30 thousand
 				while (true) {
 					System.out.println("Enter Amount to Withdraw: ");
 					withdraw=integer.nextInt();
 					if (withdraw > 30000) {
+						System.out.println("\n................................................");
 						System.out.println("Your Daily Withdraw limit is Thirty Thousand Only ");
+						System.out.println(" .................................................\n");
 					}
 					else {
 						break;
@@ -165,7 +174,7 @@ public class Atm {
 			case 3:
 			    System.out.println("\n-------------");
 				System.out.println("Balance Check");
-				System.out.println("--------------\n");
+				System.out.println("--------------\n");                       //Case 3 : Balance check
 				int balance;
 				String name; 
 				qry = "SELECT Name,Balance from Atmusers where Accno = "+Accno+" AND Pin = "+pin+" ";
@@ -184,7 +193,7 @@ public class Atm {
 
 			case 4:
 			    System.out.println("\n--------------");
-				System.out.println("Mini Statement");
+				System.out.println("Mini Statement");                             //Case 4 : Mini Statement -> It will be Printed to a separate File
 				System.out.println("--------------\n");
 				int mini_balance =0;
 				String mini_name = ""; 
@@ -232,7 +241,7 @@ public class Atm {
 				
 			case 5:
 				System.out.println("\n------------");
-				System.out.println("Pin Change");
+				System.out.println("Pin Change");                            //Case 5 : Pin changing -> need to enter old password and Date of birth.
 				System.out.println("------------\n");
 				
 				String checkdob = null;
@@ -256,7 +265,7 @@ public class Atm {
 				System.out.println("Enter your Date-of-Birth in format YYYY-MM-DD: ");
 				dob=string.next();
 				scheck= dob.equals(checkdob);
-				System.out.println( scheck);
+				//System.out.println( scheck);
 				
 				if (oldpin == checkpin && scheck){
 					
@@ -282,15 +291,20 @@ public class Atm {
 					st= con.prepareStatement(qry);
 					st.executeUpdate();
 					System.out.println("\n------------------------------");
-					System.out.println("Your New Pin Set Successfully ");
-					System.out.println("------------------------------\n");
+					System.out.println("Your New Pin Set Successfully   ");
+					System.out.println("--------------------------------\n");
 					thankyou();
 					
 				}
 				else {
+					System.out.println("\n----------------------------------------");
 					System.out.println(" Your Old pin or Date-of-Birth is Wrong.  ");
-					System.out.println("Try After Some Time \n ----- Thank you ..");
-					System.out.println("------------------------------------\n");
+					System.out.println("----------------------------------------\n");
+					
+					System.out.println("\n-------------------");
+					System.out.println("Try After Some Time ");
+					System.out.println("--------------------\n");
+					
 					thankyou();
 				}
 				break;
@@ -298,26 +312,26 @@ public class Atm {
 			case 6:
 				System.out.println("\n-----------");
 				System.out.println("Contact Us");
-				System.out.println("------------\n");
+				System.out.println("------------\n");                                      //Case 6 : Contact us option
 				System.out.println("\n-------------------------------");
 				System.out.println("For any banking related Queries");
-				System.out.println("mail to : help@ravijiaswa.com ");
+				System.out.println("mail to : help@blackfox.com ");
 				System.out.println("-------------------------------\n");
 				thankyou();
 				break;
 				
 			case 7:
-				//System.out.println("Exit");
+				//System.out.println("Exit");                                             //Case 7 : Exit -> It will return to Display function
 				display();
 				break;
 				
 			default:
-				System.out.println("\nEnter a number between 1 to 7");
+				System.out.println("\nEnter a number between 1 to 7");                    //Default shows options are in 1 to 7
 				System.out.println("-------------------------------\n");
 		}
 
 	}
-	public void thankyou(){
+	public void thankyou(){                                                               //Thankyou function to print the thanks message.
 				System.out.println("-----------------------");
 				System.out.println("--Thank You For Using--");
 				System.out.println("-----Black Fox Atm-----");
